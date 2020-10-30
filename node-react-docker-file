@@ -32,13 +32,20 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # confirm installation
 RUN node -v
 RUN npm -v
-RUN mkdir /root/sms
-COPY ./sms/ /root/sms
-RUN ls /root/sms/*
-WORKDIR /root/sms/backend
+# Install yarn globally 
 RUN npm install -g yarn
+#clone into react app 
+RUN git clone git@github.com:SamimAzimi/react-docker.git
+# download dependencies
+WORKDIR /root/react-docker/backend
+RUN yarn install 
+WORKDIR /root/react-docker
+RUN yarn install 
 EXPOSE 5000
+# run the backend node RESTful API
+WORKDIR /root/react-docker
 RUN yarn watch &
-WORKDIR /root/sms/
+# run the front-end react
+WORKDIR /root/react-docker/
 CMD ["yarn", "start"]
 
